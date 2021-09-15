@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .move-btn {
+            width: 30px;
+            height: 30px;
+            background: #000;
+        }
+        .next {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="calendar-box">
+        <button id="prev">이전</button>
+        <span id="now"></span>
+        <button id="next">다음</button>
+        <div id="calendar"></div>
+    </div>
+    <script>
+        const $calendar =  document.querySelector("#calendar");
+        const $now =  document.querySelector("#now");
+        let date = new Date();
+
+        function showCalendar(date) {
+            console.log(date);
+            let year = date.getFullYear();
+            let month = date.getMonth();
+            console.log(month);
+
+            // now에 요일 추가
+            $now.append(date.getFullYear());
+            $now.append(date.getMonth()+1);
+
+            // 1일의 요일 구하기
+            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+            console.log("firstDate " + firstDay);
+
+            // 테이블 생성, 클래스 네임 부여
+            const $table = document.createElement("table");
+            $table.className = "calendar-tbl";
+
+            // 요일
+            const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+            const $thead = document.createElement("thead");
+            let $tr1 = document.createElement("tr");
+            for (let i = 0; i < weekDays.length; i++) {
+                const $th = document.createElement("th");
+                $th.append(weekDays[i]);
+                $tr1.append($th);
+            }
+            $thead.append($tr1);
+
+            const $tbody = document.createElement("tbody");
+
+            // 마지막 날
+            const lastDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            // 윤년 구하기
+            if ((year%4 === 0) && year % 100 != 0 || year % 400 == 0) {
+                lastDays[1] = 29;
+            }
+
+            // 6주, 7일마다 tr 추가 줄바꾸기
+            let cnt = 1;
+            for(let i = 0; i < 6; i++) {
+                let $tr = document.createElement('tr');
+                for(let j = 0; j < 7; j++) {
+                    if ((i === 0 && j < firstDay || cnt > lastDays[date.getMonth()])) {
+                        let $td = document.createElement('td');
+                        $tr.appendChild($td);
+                    } else {
+                        let $td = document.createElement('td');
+                        $td.append(cnt);
+                        $tr.appendChild($td);
+                        cnt++;
+                    }
+                }
+                $tbody.append($tr);
+            }
+
+            $table.append($thead);
+            $table.append($tbody);
+            $calendar.append($table);
+        }
+
+        // 달력 보기
+        showCalendar(date);
+
+        // 이전 버튼
+        const $prev = document.querySelector("#prev").addEventListener("click", function(){
+            console.log("이전버튼");
+            date = new Date(date.getFullYear(), date.getMonth()-1, date.getDate());
+            $calendar.textContent = "";
+            $now.textContent = "";
+            showCalendar(date);
+        });
+
+        // 다음 버튼
+        const $next = document.querySelector("#next").addEventListener("click", function() {
+            console.log("다음버튼");
+            date = new Date(date.getFullYear(), date.getMonth()+1, date.getDate());
+            $calendar.textContent = "";
+            $now.textContent = "";
+            showCalendar(date);
+        });
+
+    </script>
+</body>
+</html>
