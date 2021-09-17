@@ -1,3 +1,4 @@
 # studyCal
 
-JavaScript ES6로 달력 만들고 localStorage를 사용하는 코드입니다.
+JavaScript ES6로 달력을 만들고,
+localStorage를 사용해서 Todo-list를 만드는 코드입니다.
