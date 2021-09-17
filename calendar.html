@@ -5,40 +5,104 @@
     <title>Title</title>
     <style>
         .move-btn {
-            width: 30px;
-            height: 30px;
-            background: #000;
+            padding: 20px;
+            color :#fff;
+            background: #689ae2;
+            border: none;
         }
-        .next {
-            text-align: right;
+        #calendar th, #calendar td {
+            padding: 20px;
+        }
+        .today {
+            background: #0a53be;
+            color: #fff;
+            cursor: pointer;
+        }
+        .month-date {
+            font-weight: 600;
+            padding-left: 10px;
+        }
+        .select-date {
+            cursor: pointer;
+        }
+        .todo-list-box {
+            position: absolute;
+            top :50%;
+            left: 50%;
+            width: 500px;
+            height: 500px;
+            margin-top: -250px;
+            margin-left: -250px;
+            background: #fff;
+            border: 1px solid #000;
+            display: none;
+            padding: 20px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            margin: 10px;
+        }
+        .todo-date {
+            font-weight: 600;
+        }
+        .submit {
+            padding: 10px 20px;
+            vertical-align: middle;
+            margin-left: 20px;
         }
     </style>
 </head>
 <body>
     <div id="calendar-box">
-        <button id="prev">이전</button>
-        <span id="now"></span>
-        <button id="next">다음</button>
+        <div class="btn-box">
+            <button id="prev" class="move-btn">이전</button>
+            <span id="now"></span>
+            <button id="next" class="move-btn">다음</button>
+            <button type="button" class="today-btn move-btn">오늘 날짜</button>
+        </div>
         <div id="calendar"></div>
+        <div class="todo-list-box">
+            <h1>TODO-LIST</h1>
+            <p class="todo-date"></p>
+            <div class="todo-list"></div>
+            <div class="result-list"></div>
+            <button type="button" class="close-btn">닫기</button>
+        </div>
     </div>
     <script>
         const $calendar =  document.querySelector("#calendar");
         const $now =  document.querySelector("#now");
+        const $todoListBox = document.querySelector(".todo-list-box");
+        const $todoList = document.querySelector(".todo-list");
         let date = new Date();
+        let today = new Date();
+        let todayDate;
 
-        function showCalendar(date) {
+        function showCalendar(today) {
             console.log(date);
-            let year = date.getFullYear();
-            let month = date.getMonth();
+            let year = today.getFullYear();
+            let month = today.getMonth();
             console.log(month);
 
+            // 년 표시
+            const yearDate = document.createElement("span");
+            yearDate.append(year + "년");
+            yearDate.className = "year-date";
+
+            // 월 표시
+            const monthDate = document.createElement("span");
+            monthDate.append(month+1 + "월");
+            monthDate.className = "month-date";
+
             // now에 요일 추가
-            $now.append(date.getFullYear());
-            $now.append(date.getMonth()+1);
+            month.className = "month";
+            $now.append(yearDate);
+            $now.append(monthDate);
 
             // 1일의 요일 구하기
-            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-            console.log("firstDate " + firstDay);
+            let firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
 
             // 테이블 생성, 클래스 네임 부여
             const $table = document.createElement("table");
@@ -66,6 +130,7 @@
             }
 
             // 6주, 7일마다 tr 추가 줄바꾸기
+            let todayDate;
             let cnt = 1;
             for(let i = 0; i < 6; i++) {
                 let $tr = document.createElement('tr');
@@ -76,8 +141,22 @@
                     } else {
                         let $td = document.createElement('td');
                         $td.append(cnt);
+                        $td.className = "select-date";
                         $tr.appendChild($td);
                         cnt++;
+
+                        // 각각의 날짜 클릭
+                        $td.addEventListener("click", function() {
+                            todoList(today, $td);
+                            readLocalStorage();
+                        });
+
+                        // 오늘 날짜 표시
+                        if( today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && cnt-1==date.getDate() )
+                        {
+                            todayDate = $td;
+                            todayDate.className = "today";
+                        }
                     }
                 }
                 $tbody.append($tr);
@@ -88,25 +167,105 @@
             $calendar.append($table);
         }
 
+
+        // todoList 로직
+        function todoList(today, $td) {
+            const $resultList = document.querySelector(".result-list");
+            // result 초기화
+            $resultList.textContent = "";
+            // todoList 박스 띄우기
+            $todoListBox.style.display = "block";
+            // todoList 요일 추가
+            $todoList.textContent = today.getFullYear() + '일 ' + today.getMonth() + "월 " + $td.innerHTML + "일";
+            const date = today.getFullYear() + "0" +  today.getMonth()+ "" +$td.innerHTML;
+            console.log(date);
+            // ul, li, input, button 추가
+            const $ul = document.createElement("ul");
+            const $li = document.createElement("li");
+            const $input = document.createElement("input");
+            $input.className = "add-list";
+            const $addTodo = document.createElement("button");
+            $addTodo.className = "submit";
+            $addTodo.innerHTML = "추가";
+
+            let count = 0;
+            // 리스트 추가 버튼 로직
+            $addTodo.addEventListener("click", function() {
+                const $ul = document.createElement("ul");
+                const $li = document.createElement("li");
+                // 무슨 이벤트인지 구분하기 위한 id 값
+                count += 1;
+                let inputValue = $input.value;
+                saveLocalStroge(date, inputValue);
+                $li.append(inputValue);
+                $li.
+                $ul.append($li);
+                $resultList.append($ul);
+            });
+
+            $input.setAttribute("type", "text");
+            $ul.append($li);
+            $li.append($input);
+            $li.append($addTodo);
+            $todoList.append($ul);
+        }
+
+        // local Storage Save
+        let todo = [];
+        function saveLocalStroge(date, inputValue) {
+            let list = localStorage.getItem("list");
+            if (list) {
+                todo = JSON.parse(list);
+            }
+            todo.push({"date":date, "event":inputValue});
+            localStorage.setItem("list",JSON.stringify(todo));
+        }
+
+        // read localStorage
+        let list = [];
+        function readLocalStorage(date) {
+            list = localStorage.getItem("list");
+            console.log(list);
+        }
+
         // 달력 보기
         showCalendar(date);
 
         // 이전 버튼
         const $prev = document.querySelector("#prev").addEventListener("click", function(){
             console.log("이전버튼");
-            date = new Date(date.getFullYear(), date.getMonth()-1, date.getDate());
+            today = new Date(today.getFullYear(), today.getMonth()-1, today.getDate());
             $calendar.textContent = "";
             $now.textContent = "";
-            showCalendar(date);
+            $todoListBox.style.display = "none";
+            showCalendar(today);
         });
 
         // 다음 버튼
         const $next = document.querySelector("#next").addEventListener("click", function() {
             console.log("다음버튼");
-            date = new Date(date.getFullYear(), date.getMonth()+1, date.getDate());
+            today = new Date(today.getFullYear(), today.getMonth()+1, today.getDate());
             $calendar.textContent = "";
             $now.textContent = "";
-            showCalendar(date);
+            $todoListBox.style.display = "none";
+            showCalendar(today);
+        });
+
+        document.querySelector(".today").addEventListener("click", function() {
+            console.log("오늘");
+        });
+
+        document.querySelector(".close-btn").addEventListener("click", function() {
+            $todoListBox.style.display = "none";
+        });
+
+        document.querySelector('.today-btn').addEventListener("click", function() {
+            today = new Date();
+            console.log("오늘날짜" + today);
+            $calendar.textContent = "";
+            $now.textContent = "";
+            $todoListBox.style.display = "none";
+            showCalendar(today);
         });
 
     </script>
