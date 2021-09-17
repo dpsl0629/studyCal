@@ -71,6 +71,7 @@
             <button type="button" class="close-btn">닫기</button>
         </div>
     </div>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script>
         const $calendar =  document.querySelector("#calendar");
         const $now =  document.querySelector("#now");
@@ -148,7 +149,9 @@
                         // 각각의 날짜 클릭
                         $td.addEventListener("click", function() {
                             todoList(today, $td);
-                            readLocalStorage();
+                            const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
+                            const formateDate  = moment(date).format("YYYYMMDD");
+                            readLocalStorage(formateDate);
                         });
 
                         // 오늘 날짜 표시
@@ -177,8 +180,9 @@
             $todoListBox.style.display = "block";
             // todoList 요일 추가
             $todoList.textContent = today.getFullYear() + '일 ' + today.getMonth() + "월 " + $td.innerHTML + "일";
-            const date = today.getFullYear() + "0" +  today.getMonth()+ "" +$td.innerHTML;
-            console.log(date);
+            // 선택한 날짜
+            const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
+            const formateDate  = moment(date).format("YYYYMMDD");
             // ul, li, input, button 추가
             const $ul = document.createElement("ul");
             const $li = document.createElement("li");
@@ -196,9 +200,9 @@
                 // 무슨 이벤트인지 구분하기 위한 id 값
                 count += 1;
                 let inputValue = $input.value;
-                saveLocalStroge(date, inputValue);
+                // 로컬 스토리지에 저장
+                saveLocalStroge(formateDate, inputValue);
                 $li.append(inputValue);
-                $li.
                 $ul.append($li);
                 $resultList.append($ul);
             });
@@ -210,21 +214,25 @@
             $todoList.append($ul);
         }
 
+        let dateLists = [];
+        let dataList = [];
+        let name;
         // local Storage Save
-        let todo = [];
-        function saveLocalStroge(date, inputValue) {
-            let list = localStorage.getItem("list");
-            if (list) {
-                todo = JSON.parse(list);
+        function saveLocalStroge(nowDate, inputValue) {
+            dateLists.push(nowDate);
+            console.log(inputValue);
+            if (dateLists[nowDate] == undefined) {
+                dataList.push({"key" : dataList.length + 1, "content" : inputValue, "delete" : "N"});
+            } else {
+                dataList = dateLists[nowDate];
             }
-            todo.push({"date":date, "event":inputValue});
-            localStorage.setItem("list",JSON.stringify(todo));
+            localStorage.setItem(nowDate,JSON.stringify(dataList));
         }
 
         // read localStorage
         let list = [];
-        function readLocalStorage(date) {
-            list = localStorage.getItem("list");
+        function readLocalStorage(nowDate) {
+            list = localStorage.getItem("dataList");
             console.log(list);
         }
 
