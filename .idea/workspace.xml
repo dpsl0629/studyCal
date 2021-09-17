@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7175ec26-c1ea-4949-9bc4-cb9233411eba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="7175ec26-c1ea-4949-9bc4-cb9233411eba" name="Default Changelist" comment="localStorage 기능 변경">
+      <change afterPath="$PROJECT_DIR$/dddd.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/calendar.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +65,7 @@
       <workItem from="1631671467031" duration="2667000" />
       <workItem from="1631688584156" duration="2724000" />
       <workItem from="1631750191607" duration="18029000" />
-      <workItem from="1631836444974" duration="9956000" />
+      <workItem from="1631836444974" duration="11129000" />
     </task>
     <task id="LOCAL-00001" summary="localStorage 추가하기">
       <created>1631836846658</created>
@@ -75,7 +74,14 @@
       <option name="project" value="LOCAL" />
       <updated>1631836846658</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="localStorage 기능 변경">
+      <created>1631849432027</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1631849432027</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,6 +102,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="localStorage 추가하기" />
-    <option name="LAST_COMMIT_MESSAGE" value="localStorage 추가하기" />
+    <MESSAGE value="localStorage 기능 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="localStorage 기능 변경" />
   </component>
 </project>
