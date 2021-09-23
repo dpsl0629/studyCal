@@ -30,7 +30,6 @@
             top :50%;
             left: 50%;
             width: 500px;
-            height: 500px;
             margin-top: -250px;
             margin-left: -250px;
             background: #fff;
@@ -66,8 +65,9 @@
         <div class="todo-list-box">
             <h1>TODO-LIST</h1>
             <p class="todo-date"></p>
-            <div class="todo-list"></div>
-            <div class="result-list"></div>
+            <div class="search"></div>
+            <div class="result-list">
+            </div>
             <button type="button" class="close-btn">닫기</button>
         </div>
     </div>
@@ -77,6 +77,9 @@
         const $now =  document.querySelector("#now");
         const $todoListBox = document.querySelector(".todo-list-box");
         const $todoList = document.querySelector(".todo-list");
+        const $todoDate = document.querySelector(".todo-date");
+        const $ul = document.createElement("ul");
+        const $search = document.querySelector(".search");
         let date = new Date();
         let today = new Date();
         let todayDate;
@@ -178,62 +181,87 @@
             $resultList.textContent = "";
             // todoList 박스 띄우기
             $todoListBox.style.display = "block";
-            // todoList 요일 추가
-            $todoList.textContent = today.getFullYear() + '일 ' + today.getMonth() + "월 " + $td.innerHTML + "일";
             // 선택한 날짜
-            const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
+            const date = new Date(today.getFullYear(), today.getMonth(), $td.innerHTML);
+            const selectDate  = moment(date).format("YYYY년 MM월 DD일");
             const formateDate  = moment(date).format("YYYYMMDD");
+            $todoDate.textContent = selectDate;
             // ul, li, input, button 추가
-            const $ul = document.createElement("ul");
-            const $li = document.createElement("li");
+            $search.textContent = "";
             const $input = document.createElement("input");
+            // 리스트 추가 버튼
             $input.className = "add-list";
             const $addTodo = document.createElement("button");
             $addTodo.className = "submit";
             $addTodo.innerHTML = "추가";
 
-            let count = 0;
-            // 리스트 추가 버튼 로직
             $addTodo.addEventListener("click", function() {
-                const $ul = document.createElement("ul");
                 const $li = document.createElement("li");
                 // 무슨 이벤트인지 구분하기 위한 id 값
-                count += 1;
                 let inputValue = $input.value;
                 // 로컬 스토리지에 저장
-                saveLocalStroge(formateDate, inputValue);
+                saveLocalStorage(formateDate, inputValue);
+                const $button = document.createElement("button");
+                $button.textContent = "삭제";
                 $li.append(inputValue);
+                $li.append($button);
+                $button.addEventListener("click", function() {
+                    $ul.removeChild($li);
+                });
                 $ul.append($li);
-                $resultList.append($ul);
             });
 
+            $resultList.append($ul);
             $input.setAttribute("type", "text");
-            $ul.append($li);
-            $li.append($input);
-            $li.append($addTodo);
-            $todoList.append($ul);
+            $search.append($input);
+            $search.append($addTodo);
         }
 
         let dateLists = [];
         let dataList = [];
         let name;
-        // local Storage Save
-        function saveLocalStroge(nowDate, inputValue) {
+        // Save localStorage
+        function saveLocalStorage(nowDate, inputValue) {
             dateLists.push(nowDate);
             console.log(inputValue);
+            if (localStorage.getItem(nowDate)) {
+                dataList = JSON.parse(localStorage.getItem(nowDate));
+            }
+
             if (dateLists[nowDate] == undefined) {
                 dataList.push({"key" : dataList.length + 1, "content" : inputValue, "delete" : "N"});
             } else {
                 dataList = dateLists[nowDate];
             }
+            console.log(dataList);
             localStorage.setItem(nowDate,JSON.stringify(dataList));
         }
 
         // read localStorage
         let list = [];
         function readLocalStorage(nowDate) {
-            list = localStorage.getItem("dataList");
-            console.log(list);
+            const $resultListUl = document.querySelector(".result-list ul");
+            list = JSON.parse(localStorage.getItem(nowDate));
+            const $resultList = document.querySelector(".result-list");
+            // list 요소 하나하나 가져와서 read
+            if (list != undefined) {
+                list.forEach(function (item) {
+                    console.log(item.key + ", " + item.content);
+                    const $button = document.createElement("button");
+                    const $li = document.createElement("li");
+                    $button.textContent = "삭제";
+                    $li.append(item.content);
+                    $li.append($button);
+                    $ul.append($li);
+                    // li id에 item key 부여
+                    $li.id = item.key;
+                    // 삭제 버튼 클릭
+                    $button.addEventListener("click", function() {
+                        console.log("클릭" + item.key);
+                    });
+                });
+            }
+            $resultList.append($ul);
         }
 
         // 달력 보기
@@ -268,12 +296,11 @@
         });
 
         document.querySelector('.today-btn').addEventListener("click", function() {
-            today = new Date();
             console.log("오늘날짜" + today);
             $calendar.textContent = "";
             $now.textContent = "";
             $todoListBox.style.display = "none";
-            showCalendar(today);
+            showCalendar(date);
         });
 
     </script>
