@@ -148,21 +148,6 @@
                         $td.className = "select-date";
                         $tr.appendChild($td);
                         cnt++;
-
-                        // 각각의 날짜 클릭
-                        $td.addEventListener("click", function() {
-                            todoList(today, $td);
-                            const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
-                            const formateDate  = moment(date).format("YYYYMMDD");
-                            readLocalStorage(formateDate);
-                        });
-
-                        // 오늘 날짜 표시
-                        if( today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && cnt-1==date.getDate() )
-                        {
-                            todayDate = $td;
-                            todayDate.className = "today";
-                        }
                     }
                 }
                 $tbody.append($tr);
@@ -171,6 +156,29 @@
             $table.append($thead);
             $table.append($tbody);
             $calendar.append($table);
+
+            let selectDate = document.querySelector(".select-date");
+
+            // // 각각의 날짜 클릭
+            document.getElementsByClassName("select-date")[0].addEventListener("click", function() {
+                console.log("click");
+
+                // todoList(today, $td);
+                // const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
+                // const formateDate  = moment(date).format("YYYYMMDD");
+                // console.log(document.querySelectorAll(".select-date"));
+                // this.classList.add("active");
+                // if (this.classList.contains("active")) {
+                //     readLocalStorage(formateDate);
+                // }
+            });
+
+            // 오늘 날짜 표시
+            // if( today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && cnt-1==date.getDate() )
+            // {
+            //     todayDate = $td;
+            //     todayDate.className = "today";
+            // }
         }
 
 
@@ -183,9 +191,8 @@
             $todoListBox.style.display = "block";
             // 선택한 날짜
             const date = new Date(today.getFullYear(), today.getMonth(), $td.innerHTML);
-            const selectDate  = moment(date).format("YYYY년 MM월 DD일");
             const formateDate  = moment(date).format("YYYYMMDD");
-            $todoDate.textContent = selectDate;
+            $todoDate.textContent = formateDate;
             // ul, li, input, button 추가
             $search.textContent = "";
             const $input = document.createElement("input");
@@ -218,23 +225,18 @@
         }
 
         let dateLists = [];
-        let dataList = [];
         let name;
         // Save localStorage
         function saveLocalStorage(nowDate, inputValue) {
+            let dataList;
             dateLists.push(nowDate);
             console.log(inputValue);
             if (localStorage.getItem(nowDate)) {
                 dataList = JSON.parse(localStorage.getItem(nowDate));
             }
 
-            if (dateLists[nowDate] == undefined) {
-                dataList.push({"key" : dataList.length + 1, "content" : inputValue, "delete" : "N"});
-            } else {
-                dataList = dateLists[nowDate];
-            }
-            console.log(dataList);
-            localStorage.setItem(nowDate,JSON.stringify(dataList));
+            console.log(dateLists);
+            localStorage.setItem("list",JSON.stringify(dateLists));
         }
 
         // read localStorage
@@ -287,9 +289,9 @@
             showCalendar(today);
         });
 
-        document.querySelector(".today").addEventListener("click", function() {
-            console.log("오늘");
-        });
+        // document.querySelector(".today").addEventListener("click", function() {
+        //     console.log("오늘");
+        // });
 
         document.querySelector(".close-btn").addEventListener("click", function() {
             $todoListBox.style.display = "none";
