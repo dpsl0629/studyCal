@@ -72,23 +72,22 @@
         </div>
     </div>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const $calendar =  document.querySelector("#calendar");
         const $now =  document.querySelector("#now");
         const $todoListBox = document.querySelector(".todo-list-box");
-        const $todoList = document.querySelector(".todo-list");
         const $todoDate = document.querySelector(".todo-date");
         const $ul = document.createElement("ul");
         const $search = document.querySelector(".search");
+
         let date = new Date();
         let today = new Date();
-        let todayDate;
 
         function showCalendar(today) {
             console.log(date);
             let year = today.getFullYear();
             let month = today.getMonth();
-            console.log(month);
 
             // 년 표시
             const yearDate = document.createElement("span");
@@ -148,6 +147,12 @@
                         $td.className = "select-date";
                         $tr.appendChild($td);
                         cnt++;
+
+                        // 오늘 날짜 표시
+                        if( today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && cnt-1==date.getDate() )
+                        {
+                            $td.classList.add("today");
+                        }
                     }
                 }
                 $tbody.append($tr);
@@ -157,44 +162,77 @@
             $table.append($tbody);
             $calendar.append($table);
 
-            let selectDate = document.querySelector(".select-date");
+            let selectDate = $(".select-date");
 
             // // 각각의 날짜 클릭
-            document.getElementsByClassName("select-date")[0].addEventListener("click", function() {
-                console.log("click");
+            selectDate.on("click", function() {
+                const date = new Date(today.getFullYear(), today.getMonth()-1, this.innerHTML);
+                const formateDate  = moment(date).format("YYYYMMDD");
+                selectDate.removeClass("active");
+                $(this).addClass("active");
+                // initial todo list
+                $(".result-list ul").empty();
+                $search.textContent = "";
+                if ($(this).hasClass("active")) {
+                    todoList(today, this);
+                }
 
-                // todoList(today, $td);
-                // const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
-                // const formateDate  = moment(date).format("YYYYMMDD");
-                // console.log(document.querySelectorAll(".select-date"));
-                // this.classList.add("active");
-                // if (this.classList.contains("active")) {
-                //     readLocalStorage(formateDate);
-                // }
             });
 
-            // 오늘 날짜 표시
-            // if( today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && cnt-1==date.getDate() )
-            // {
-            //     todayDate = $td;
-            //     todayDate.className = "today";
-            // }
         }
-
 
         // todoList 로직
         function todoList(today, $td) {
-            const $resultList = document.querySelector(".result-list");
-            // result 초기화
-            $resultList.textContent = "";
-            // todoList 박스 띄우기
-            $todoListBox.style.display = "block";
-            // 선택한 날짜
-            const date = new Date(today.getFullYear(), today.getMonth(), $td.innerHTML);
+            const date = new Date(today.getFullYear(), today.getMonth()-1, $td.innerHTML);
             const formateDate  = moment(date).format("YYYYMMDD");
             $todoDate.textContent = formateDate;
+            // todoList 박스 띄우기
+            $todoListBox.style.display = "block";
+            readLocalStorage(formateDate);
+        }
+
+        let dateLists = [];
+        let name;
+        // Save localStorage
+        function saveLocalStorage(nowDate, inputValue) {
+            if (localStorage.getItem("list")) {
+                dateLists = JSON.parse(localStorage.getItem("list"));
+            }
+
+            // check for selected data
+            if(dateLists.length == 0 || !fnCheckDate(nowDate)) {
+                // is not exist
+                dateLists.push({
+                    "date" : nowDate,
+                    todoList : [{
+                        "key" : 1,
+                        "content" : inputValue,
+                        "delete" : "N"
+                    }]
+                });
+            } else {
+                // exist
+                dateLists.forEach(function(item) {
+                    // find selected data
+                    if (item.date == nowDate) {
+                        // push data
+                        item.todoList.push({
+                            "key" : item.todoList.length + 1,
+                            "content" : inputValue,
+                            "delete" : "N"
+                        });
+                    }
+                });
+            }
+
+            localStorage.setItem("list",JSON.stringify(dateLists));
+        }
+
+        // read localStorage
+        let list = [];
+        function readLocalStorage(nowDate) {
+            const $resultList = document.querySelector(".result-list");
             // ul, li, input, button 추가
-            $search.textContent = "";
             const $input = document.createElement("input");
             // 리스트 추가 버튼
             $input.className = "add-list";
@@ -203,67 +241,95 @@
             $addTodo.innerHTML = "추가";
 
             $addTodo.addEventListener("click", function() {
-                const $li = document.createElement("li");
-                // 무슨 이벤트인지 구분하기 위한 id 값
                 let inputValue = $input.value;
                 // 로컬 스토리지에 저장
-                saveLocalStorage(formateDate, inputValue);
-                const $button = document.createElement("button");
-                $button.textContent = "삭제";
-                $li.append(inputValue);
-                $li.append($button);
-                $button.addEventListener("click", function() {
-                    $ul.removeChild($li);
-                });
-                $ul.append($li);
+                saveLocalStorage(nowDate, inputValue);
+                // read Storage
+                fnTodoListBySelectedDate(nowDate);
             });
 
             $resultList.append($ul);
             $input.setAttribute("type", "text");
             $search.append($input);
             $search.append($addTodo);
+
+            fnTodoListBySelectedDate(nowDate);
         }
 
-        let dateLists = [];
-        let name;
-        // Save localStorage
-        function saveLocalStorage(nowDate, inputValue) {
-            let dataList;
-            dateLists.push(nowDate);
-            console.log(inputValue);
-            if (localStorage.getItem(nowDate)) {
-                dataList = JSON.parse(localStorage.getItem(nowDate));
-            }
-
-            console.log(dateLists);
-            localStorage.setItem("list",JSON.stringify(dateLists));
-        }
-
-        // read localStorage
-        let list = [];
-        function readLocalStorage(nowDate) {
-            const $resultListUl = document.querySelector(".result-list ul");
-            list = JSON.parse(localStorage.getItem(nowDate));
+        function fnTodoListBySelectedDate(nowDate) {
             const $resultList = document.querySelector(".result-list");
+            $(".result-list ul").empty();
+
+            list = JSON.parse(localStorage.getItem("list"));
             // list 요소 하나하나 가져와서 read
             if (list != undefined) {
                 list.forEach(function (item) {
-                    console.log(item.key + ", " + item.content);
-                    const $button = document.createElement("button");
-                    const $li = document.createElement("li");
-                    $button.textContent = "삭제";
-                    $li.append(item.content);
-                    $li.append($button);
-                    $ul.append($li);
-                    // li id에 item key 부여
-                    $li.id = item.key;
-                    // 삭제 버튼 클릭
-                    $button.addEventListener("click", function() {
-                        console.log("클릭" + item.key);
-                    });
+                    if (item.date == nowDate) {
+                        for (let i = 0; i < item.todoList.length; i++) {
+                            if (item.todoList[i].delete == "N") {
+                                const $li = fnMakeDeleteButton();
+                                $li.append(item.todoList[i].content);
+                                $li.id = item.todoList[i].key;
+                                $ul.append($li);
+                            }
+                        }
+                    }
+
                 });
             }
             $resultList.append($ul);
+
+            // delete todo
+            $(".delete-btn").click(function (event) {
+                fnDeleteTodo($(this));
+            });
+
+        }
+
+        // make deleteButton
+        function fnMakeDeleteButton() {
+            const $li = document.createElement("li");
+            const $button = document.createElement("button");
+            $button.textContent = "삭제";
+            $button.className = "delete-btn";
+            $li.append($button);
+
+            return $li;
+        }
+
+        function fnCheckDate(_selectDate) {
+            let isExist = false;
+            dateLists.forEach(function(item) {
+                if (item.date == _selectDate) {
+                    isExist = true;
+                };
+            });
+
+            return isExist;
+        }
+
+        function fnDeleteTodo($_obj) {
+            // find a selected date
+            let selectedDate = $_obj.closest(".todo-list-box").find(".todo-date").text().trim();
+            let $li = $_obj.closest("li");
+            let id = $li.attr("id");
+
+            list.forEach(function(item) {
+                // selected date
+                if (item.date == selectedDate) {
+                    // find a todo list
+                    $.each(item.todoList, function (i, e) {
+                        if(e.key == id) {
+                            e.delete = "Y";
+                        }
+                        if (e.delete == "Y") {
+                            $li.remove();
+                        }
+                    });
+                }
+
+            });
+            localStorage.setItem("list",JSON.stringify(list));
         }
 
         // 달력 보기
@@ -289,9 +355,9 @@
             showCalendar(today);
         });
 
-        // document.querySelector(".today").addEventListener("click", function() {
-        //     console.log("오늘");
-        // });
+        document.querySelector(".today").addEventListener("click", function() {
+            console.log("오늘");
+        });
 
         document.querySelector(".close-btn").addEventListener("click", function() {
             $todoListBox.style.display = "none";
