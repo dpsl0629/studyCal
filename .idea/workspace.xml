@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7175ec26-c1ea-4949-9bc4-cb9233411eba" name="Default Changelist" comment="localStorage 기능 변경">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/calendar.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +33,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="vcs.Subversion" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -49,7 +48,7 @@
     </option>
   </component>
   <component name="SvnConfiguration">
-    <configuration>C:\Users\dq\AppData\Roaming\Subversion</configuration>
+    <configuration>C:\Users\YWKIM\AppData\Roaming\Subversion</configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -66,7 +65,9 @@
       <workItem from="1631688584156" duration="2724000" />
       <workItem from="1631750191607" duration="18029000" />
       <workItem from="1631836444974" duration="12011000" />
-      <workItem from="1632354907345" duration="23479000" />
+      <workItem from="1632354907345" duration="23524000" />
+      <workItem from="1632387848367" duration="44000" />
+      <workItem from="1632441093074" duration="14698000" />
     </task>
     <task id="LOCAL-00001" summary="localStorage 추가하기">
       <created>1631836846658</created>
@@ -96,7 +97,21 @@
       <option name="project" value="LOCAL" />
       <updated>1632380697967</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="localStorage 기능 변경">
+      <created>1632387711896</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1632387711896</updated>
+    </task>
+    <task id="LOCAL-00006" summary="calendar 만들기">
+      <created>1632461897834</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1632461897834</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -118,6 +133,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="localStorage 추가하기" />
     <MESSAGE value="localStorage 기능 변경" />
-    <option name="LAST_COMMIT_MESSAGE" value="localStorage 기능 변경" />
+    <MESSAGE value="calendar 만들기" />
+    <option name="LAST_COMMIT_MESSAGE" value="calendar 만들기" />
   </component>
 </project>
